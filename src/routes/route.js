@@ -3,19 +3,22 @@ const router = express.Router();
 
 const authorController = require('../controllers/authorController')
 const BlogController = require('../controllers/blogController')
+const middleware = require('../MIDDLEWARE/auth')
 
 
 router.get("/test-me", function (req, res) {
     res.send("My first ever api!")
 })
-
+//phase1
 router.post('/author', authorController.createAuthor)
-router.post('/blog', BlogController.createBlog)
-router.get('/getblogs',BlogController.getData )
-router.put('/update/:blogId',BlogController.updateData)
-router.delete('/blogs/:blogId',BlogController.deleteBlog)
-router.delete('/blogs',BlogController.deleteMultipleFields)
+router.post('/blog',middleware.jwtauth, BlogController.createBlog)
+router.get('/getblogs',middleware.jwtauth, BlogController.getData )
+router.put('/update/:blogId',middleware.jwtauth, BlogController.updateData)
+router.delete('/blogs/:blogId',middleware.jwtauth, BlogController.deleteBlog)
+router.delete('/blogs',middleware.jwtauth, BlogController.deleteMultipleFields)
 
+//phase2
+router.get('/login',authorController.loginAuthor)
 
 
 module.exports = router;

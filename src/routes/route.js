@@ -12,13 +12,15 @@ router.get("/test-me", function (req, res) {
 //phase1
 router.post('/author', authorController.createAuthor)
 router.post('/blog',middleware.jwtauth, BlogController.createBlog)
+
 router.get('/getblogs',middleware.jwtauth, BlogController.getData )
-router.put('/update/:blogId',middleware.jwtauth, BlogController.updateData)
-router.delete('/blogs/:blogId',middleware.jwtauth, BlogController.deleteBlog)
+router.put('/update/:blogId',middleware.jwtauth2, BlogController.updateData)
+
+router.delete('/blogs/:blogId',middleware.jwtauth2, BlogController.deleteBlog)
 router.delete('/blogs',middleware.jwtauth, BlogController.deleteMultipleFields)
 
 //phase2
-router.get('/login',authorController.loginAuthor)
+router.post('/login',authorController.loginAuthor)
 
 
 module.exports = router;

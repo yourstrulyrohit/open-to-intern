@@ -69,8 +69,8 @@ const getData = async function (req, res) {
 const updateData = async function (req, res) {
     try {
         let blogId = req.params.blogId
-        console.log(blogId)
-        if (!blogId) res.status(400).send({ status: false, msg: "blogid is not present" })
+       
+        if (!blogId) res.status(400).send({ status: false, msg: "Bad Request" })
         let { isPublished, tags, subcategory } = req.body;
         //console.log(isPublished)
         if (isPublished && isPublished == true) {
@@ -81,7 +81,7 @@ const updateData = async function (req, res) {
         // console.log(tags, typeof (tags))
         if (tags || subcategory) {
             // console.log('hello')
-            let tsobject = await BlogModel.findOne({ _id: blogId })
+            let tsobject = await BlogModel.findOne({ _id: blogId , isDeleted:false})
             if (!tsobject) { return res.status(404).send({ status: false, msg: "data is not Found" }) }
             if (tags) {
 
@@ -104,9 +104,12 @@ const updateData = async function (req, res) {
         let blogData = req.body
         // console.log(blogData)
         await BlogModel.updateOne({ _id: blogId, isDeleted: false }, blogData)
+
         let blogsCollection = await BlogModel.find({ _id: blogId })
+
         if (!blogsCollection) { return res.status(404).send({ status: false, msg: "Data is Not Found" }) }
-        res.status(201).send({ status: true, msg: blogsCollection })
+        
+        res.status(200).send({ status: true, msg: blogsCollection })
     } catch (err) {
         console.log("This is the error :", err.message)
         res.status(500).send({ msg: "Error", error: err.message })
@@ -118,13 +121,13 @@ const updateData = async function (req, res) {
 const deleteBlog = async function (req, res) {
     try {
         let blogId = req.params.blogId
-        console.log(blogId)
+        
         if (!blogId) {
             res.status(400).send({ status: false, msg: "blogId is required, BAD REQUEST" })
         }
         let blogDetails = await BlogModel.find({ _id: blogId, isDeleted: false })
-        console.log(blogDetails)
-        if (!blogDetails) {
+        
+        if (blogDetails.length <= 0) {
             res.status(404).send({ status: false, msg: "blog not exist" })
         }
         // blogDetails.isDeleted = true
@@ -132,8 +135,7 @@ const deleteBlog = async function (req, res) {
 
         await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: date }, { new: true })
         res.status(200).send()
-        // console.log(blogDetails)
-        // console.log(objdelete)
+        
 
     }
     catch (error) {
@@ -160,11 +162,8 @@ const deleteMultipleFields = async function (req, res) {
         }
 
         // let multipleDeletes = await BlogModel.find({ $and: [{ isDeleted: false},{ authorId: authorId }, { $or: [{ blogId: blogId }, { category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }] }] })
-        let multipleDeletes = await BlogModel.find({ $and: [{ isDeleted: true, authorId: authorId }, { $or: [{ authorId: authorId }, { blogId: blogId }, { category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }] }] })
-        console.log("hello data")
-        console.log(multipleDeletes.length)
-
-
+        let multipleDeletes = await BlogModel.find({ $and: [{ isDeleted: false, authorId: authorId }, { $or: [{ authorId: authorId }, { blogId: blogId }, { category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }] }] })
+       
         if (multipleDeletes.length <= 0) {
             return res.status(404).send({ status: false, msg: "data not found" })
         }
@@ -174,7 +173,7 @@ const deleteMultipleFields = async function (req, res) {
         for (let i = 0; i < multipleDeletes.length; i++) {
             let blogId = multipleDeletes[i]._id
 
-            await BlogModel.findByIdAndUpdate(blogId, { $set: { isDeleted: false, deletedAt: date } }, { new: true })
+            await BlogModel.findByIdAndUpdate(blogId, { $set: { isDeleted: true, deletedAt: date } }, { new: true })
 
         }
 

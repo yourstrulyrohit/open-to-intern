@@ -21,7 +21,8 @@ const createAuthor = async function (req, res) {
         }
 
 
-        //delete req.body["cpassword"]
+        delete req.body["cpassword"] // we are deleting the cpassword because don't need to save in dataBase
+
         if (Object.keys(data).length != 0) {
             let savedData = await authorModel.create(data)
             res.status(201).send({ status: true, data: savedData })
@@ -41,7 +42,7 @@ const createAuthor = async function (req, res) {
 
 const loginAuthor = async function (req, res) {
     try {
-        
+
         const { email, password } = req.body
 
         if (!email || !password) { return res.send({ msg: ' Bad request' }) }

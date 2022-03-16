@@ -12,26 +12,19 @@ const jwtauth = async function (req, res, next) {
 
     if (!token) return res.status(401).send({ status: false, msg: "token must be present" });
 
-    // console.log(token);
 
     let decodedToken = jwt.verify(token, "SECRETKEYISTHEIMPORTANTPARTOFTOKEN");
-    console.log(decodedToken)
+    
     if (!decodedToken)
       return res.status(401).send({ status: false, msg: "token is invalid" });
 
-
-
-
     // authorise
     let authorId = req.query.authorId
-    console.log(authorId)
-    if (!authorId) authorId = req.body.authorId
-    console.log(authorId)
     if (!authorId) authorId = req.params.authorId
-    console.log(authorId)
+    if (!authorId) authorId = req.body.authorId
+    
     if (!authorId) { return res.status(400).send({ status: false, msg: "Bad request authorId is must" }) }
-    console.log(authorId)
-
+ 
 
     let authorLoggedIn = decodedToken.authorId
     if (authorId != authorLoggedIn) return res.status(401).send({ status: false, msg: 'Author logged is not allowed to modify the requested authors data' })
@@ -56,10 +49,9 @@ const jwtauth2 = async function (req, res, next) {
     if (!token) token = req.headers["x-auth-token"];
 
     if (!token) return res.status(401).send({ status: false, msg: "token must be present" });
-    // console.log(token);
-
+   
     let decodedToken = jwt.verify(token, "SECRETKEYISTHEIMPORTANTPARTOFTOKEN");
-    //console.log(decodedToken)
+   
     if (!decodedToken)
       return res.status(401).send({ status: false, msg: "token is invalid" });
 
@@ -74,11 +66,9 @@ const jwtauth2 = async function (req, res, next) {
     let tsobject = await BlogModel.findById(blogId);
     if (!tsobject) { return res.status(404).send({ status: false, msg: "data is not Found" }) }
     let authorId = tsobject.authorId
-    console.log(tsobject)
 
     let authorLoggedIn = decodedToken.authorId
-    console.log(authorLoggedIn)
-    console.log(authorId)
+
     if (authorId != authorLoggedIn) return res.status(401).send({ status: false, msg: 'Author logged is not allowed to modify the requested authors data' })
 
     next()

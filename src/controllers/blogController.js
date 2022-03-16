@@ -14,14 +14,14 @@ const createBlog = async function (req, res) {
 
 
         if (Object.keys(data).length != 0) {
-            
-            
+
+
             let author = await authorModel.findById(authorId)
 
-            if (!author) res.send({ msg: "author with this id is not valid" })
+            if (!author) res.satus(404).send({ msg: "author with this id is not valid" })
 
             let savedData = await BlogModel.create(data)
-            console.log(savedData)
+            //console.log(savedData)
             res.status(201).send({ status: true, data: savedData })
         }
         else res.status(400).send({ msg: "BAD REQUEST" })
@@ -36,29 +36,30 @@ const createBlog = async function (req, res) {
 const getData = async function (req, res) {
     try {
         let authorId = req.query.authorId;
-       if(!authorId){return res.status(400).send({status:false, msg:"Bad request authorId is must"})}
-        let {category,tags,subcategory} = req.query;
-        
-        console.log(tags)
-        console.log(category)
+        if (!authorId) { return res.status(400).send({ status: false, msg: "Bad request authorId is must" }) }
+        let { category, tags, subcategory } = req.query;
 
-        // if (!category && !tags && !subcategory && authorId ) {
-        //     let data = await BlogModel.find({$or:[{ isDeleted: false, isPublished: true },{isDeleted:false, authorId:authorId } ]})
-            
-        //     console.log("first data fetch")
-        //     if (data.length <= 0) {
-        //         return res.status(404).send({ status: false, msg: "Data Not Found" })
-        //     }
-        //     return res.status(200).send({ status: true, msg: data })
-        // }
+        // console.log(tags)
+        // console.log(category)
 
-        let data = await BlogModel.find({ $and: [{ isDeleted: false }, { isPublished: true }, { $or: [{ authorId: authorId ,isDeleted:false}, { category: category }, { tags: tags },{subcategory:subcategory}] }] })
+        if (!category && !tags && !subcategory && authorId ) {
+            let data = await BlogModel.find({$or:[{ isDeleted: false, isPublished: true },{isDeleted:false, authorId:authorId } ]})
+
+            console.log("first data fetch")
+            if (data.length <= 0) {
+                return res.status(404).send({ status: false, msg: "Data Not Found" })
+            }
+            return res.status(200).send({ status: true, msg: data })
+        }
+
+        let data = await BlogModel.find({ $and: [{ isDeleted: false }, { isPublished: true }, { $or: [{ authorId: authorId, isDeleted: false }, { category: category }, { tags: tags }, { subcategory: subcategory }] }] })
         console.log("second Api")
-        let data1 = await BlogModel.find({authorId:authorId,isPublished:false})
+        // we are showing unpublished data to it's author because author can see it's own Both published and unpublished data
+        let data1 = await BlogModel.find({ authorId: authorId, isPublished: false })
         if (data.length <= 0 && data1.length <= 0) {
             return res.status(404).send({ status: false, masg: "sorry we couldn't find releted data" })
         }
-        res.status(200).send({ status: true, msg: data,data1 })
+        res.status(200).send({ status: true, msg: data, data1 })
     } catch (err) {
         console.log("This is the error :", err.message)
         res.status(500).send({ msg: "Error", error: err.message })
@@ -77,16 +78,16 @@ const updateData = async function (req, res) {
             req.body.publishedAt = Date
             //console.log(isPublished)
         }
-       // console.log(tags, typeof (tags))
+        // console.log(tags, typeof (tags))
         if (tags || subcategory) {
-           // console.log('hello')
+            // console.log('hello')
             let tsobject = await BlogModel.findOne({ _id: blogId })
             if (!tsobject) { return res.status(404).send({ status: false, msg: "data is not Found" }) }
             if (tags) {
 
                 let ptags = tsobject.tags
                 tags = [...ptags, ...tags]
-                tags = tags.filter((val,index,arr)=> arr.indexOf(val)==index)
+                tags = tags.filter((val, index, arr) => arr.indexOf(val) == index)
                 req.body.tags = tags;
 
 
@@ -94,14 +95,14 @@ const updateData = async function (req, res) {
             if (subcategory) {
                 let psubcategory = tsobject.subcategory;
                 subcategory = [...psubcategory, ...subcategory];
-                subcategory =subcategory.filter((val,index,arr)=> arr.indexOf(val)==index)
+                subcategory = subcategory.filter((val, index, arr) => arr.indexOf(val) == index)
                 req.body.subcategory = subcategory
 
             }
 
         }
         let blogData = req.body
-       // console.log(blogData)
+        // console.log(blogData)
         await BlogModel.updateOne({ _id: blogId, isDeleted: false }, blogData)
         let blogsCollection = await BlogModel.find({ _id: blogId })
         if (!blogsCollection) { return res.status(404).send({ status: false, msg: "Data is Not Found" }) }
@@ -129,7 +130,7 @@ const deleteBlog = async function (req, res) {
         // blogDetails.isDeleted = true
         let date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
 
-         await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: date }, { new: true })
+        await BlogModel.findByIdAndUpdate({ _id: blogId }, { isDeleted: true, deletedAt: date }, { new: true })
         res.status(200).send()
         // console.log(blogDetails)
         // console.log(objdelete)
@@ -158,8 +159,8 @@ const deleteMultipleFields = async function (req, res) {
             return res.status(400).send({ status: false, msg: "bad request" })
         }
 
-       // let multipleDeletes = await BlogModel.find({ $and: [{ isDeleted: false},{ authorId: authorId }, { $or: [{ blogId: blogId }, { category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }] }] })
-        let multipleDeletes = await BlogModel.find({$and: [{  isDeleted: true, authorId: authorId }, { $or: [{ authorId: authorId }, {blogId: blogId },  {category: category} ,  {tags: tags },  {subcategory: subcategory} ,{ isPublished: isPublished }]} ]})
+        // let multipleDeletes = await BlogModel.find({ $and: [{ isDeleted: false},{ authorId: authorId }, { $or: [{ blogId: blogId }, { category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }] }] })
+        let multipleDeletes = await BlogModel.find({ $and: [{ isDeleted: true, authorId: authorId }, { $or: [{ authorId: authorId }, { blogId: blogId }, { category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }] }] })
         console.log("hello data")
         console.log(multipleDeletes.length)
 
@@ -170,13 +171,13 @@ const deleteMultipleFields = async function (req, res) {
         let date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
 
         //console.log(multipleDeletes)
-        for(let i=0; i< multipleDeletes.length; i++){
+        for (let i = 0; i < multipleDeletes.length; i++) {
             let blogId = multipleDeletes[i]._id
 
-            await BlogModel.findByIdAndUpdate(blogId , { $set: { isDeleted: false ,deletedAt: date} },{new:true})
+            await BlogModel.findByIdAndUpdate(blogId, { $set: { isDeleted: false, deletedAt: date } }, { new: true })
 
         }
-         
+
         return res.status(200).send()
 
     } catch (err) {

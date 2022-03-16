@@ -28,7 +28,7 @@ const blogsSchema = new mongoose.Schema({
     },
     subcategory: {
         type: [String],
-        required: true,
+        required: true
 
         
     },

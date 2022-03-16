@@ -14,13 +14,6 @@ mongoose.connect("mongodb+srv://Datta-database:D3443t1432@cluster0.y648p.mongodb
 .then( () => console.log("MongoDb is connected"))
 .catch ( err => console.log(err) )
 
-// app.use (
-//     function (req, res, next) {
-//         console.log ("inside GLOBAL MW");
-//         next();
-//   }
-//   );
-
 app.use('/', route);
 
 

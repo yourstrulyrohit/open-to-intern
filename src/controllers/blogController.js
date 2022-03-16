@@ -45,7 +45,7 @@ const getData = async function (req, res) {
         if (!category && !tags && !subcategory && authorId ) {
             let data = await BlogModel.find({$or:[{ isDeleted: false, isPublished: true },{isDeleted:false, authorId:authorId } ]})
 
-            console.log("first data fetch")
+            
             if (data.length <= 0) {
                 return res.status(404).send({ status: false, msg: "Data Not Found" })
             }
@@ -61,7 +61,7 @@ const getData = async function (req, res) {
         }
         res.status(200).send({ status: true, msg: data, data1 })
     } catch (err) {
-        console.log("This is the error :", err.message)
+        //console.log("This is the error :", err.message)
         res.status(500).send({ msg: "Error", error: err.message })
     }
 }

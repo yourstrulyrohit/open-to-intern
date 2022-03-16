@@ -17,8 +17,8 @@ const blogsSchema = new mongoose.Schema({
         required: true,
     },
 
-    tags:[{
-        type:String
+    tags: [{
+        type: String
     }],
 
     category: {
@@ -30,11 +30,11 @@ const blogsSchema = new mongoose.Schema({
         type: [String],
         required: true
 
-        
+
     },
     publishedAt: {
         type: String,
-        default:''
+        default: ''
     },
 
     isPublished: {

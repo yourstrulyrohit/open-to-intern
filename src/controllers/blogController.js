@@ -158,8 +158,11 @@ const deleteMultipleFields = async function (req, res) {
             return res.status(400).send({ status: false, msg: "bad request" })
         }
 
-        let multipleDeletes = await BlogModel.find({ $and: [{ isDeleted: false},{ authorId: authorId }, { $or: [{ blogId: blogId }, { category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }] }] })
-        console.log(multipleDeletes)
+       // let multipleDeletes = await BlogModel.find({ $and: [{ isDeleted: false},{ authorId: authorId }, { $or: [{ blogId: blogId }, { category: category }, { tags: tags }, { subcategory: subcategory }, { isPublished: isPublished }] }] })
+        let multipleDeletes = await BlogModel.find({$and: [{  isDeleted: true, authorId: authorId }, { $or: [{ authorId: authorId }, {blogId: blogId },  {category: category} ,  {tags: tags },  {subcategory: subcategory} ,{ isPublished: isPublished }]} ]})
+        console.log("hello data")
+        console.log(multipleDeletes.length)
+
 
         if (multipleDeletes.length <= 0) {
             return res.status(404).send({ status: false, msg: "data not found" })
@@ -167,9 +170,14 @@ const deleteMultipleFields = async function (req, res) {
         let date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
 
         //console.log(multipleDeletes)
-        let yess = await BlogModel.updateMany({ multipleDeletes }, { $set: { isDeleted: false ,deletedAt: date} })
+        for(let i=0; i< multipleDeletes.length; i++){
+            let blogId = multipleDeletes[i]._id
 
-        return res.status(200).send({msg:yess})
+            await BlogModel.findByIdAndUpdate(blogId , { $set: { isDeleted: false ,deletedAt: date} },{new:true})
+
+        }
+         
+        return res.status(200).send()
 
     } catch (err) {
         console.log("This is the error :", err.message)

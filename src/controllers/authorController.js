@@ -54,7 +54,7 @@ const loginAuthor = async function (req, res) {
 
         if (!author) return resstatus(422).send({ status: false, msg: "Email or the password is not corerct" });
 
-        let token = jwt.sign({ authorId: author._id.toString(), authorName: author.fname, authorEmail: author.email }, SECRET_KEY);
+        let token = jwt.sign({ authorId: author._id.toString(), authorName: author.fname, authorEmail: author.email }, "SECRET_KEY");
 
         res.setHeader("x-auth-token", token);
         res.status(200).send({ status: true, data: token });

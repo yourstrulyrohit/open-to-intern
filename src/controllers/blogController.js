@@ -167,62 +167,34 @@ const deleteBlog = async function (req, res) {
 const deleteMultipleFields = async function (req, res) {
     try {
 
-             let data = req.query
+        let data = req.query
         if (!req.query) {
             return res.status(400).send({ status: false, msg: "bad request" })
         }
-        
 
 
-        //logic if any one field with authorId matches with blog the delete
 
-        let { blogId, authorId, category, tags, subcategory, isPublished } = req.query
-        //let multipleDeletes1 = await BlogModel.find({$and: [{ isDeleted: false }, {authorId: authorId }, {$or: [ { blogId: blogId }, {category: category }, {tags: tags} , {subcategory: subcategory} , {isPublished: isPublished }] }]})
-        let multipleDeletes = await BlogModel.find({$and:[{ isDeleted: false} ,{ authorId : authorId}]})
-      
-        if (multipleDeletes.length <= 0) {
-            return res.status(404).send({ status: false, msg: "data not found" })
-        }
-        let date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
+        //logic if any one field with authorId matches with blog then delete
 
-        let count1 = 0
-        for(let i=0; i<multipleDeletes.length; i++){
-            let M = multipleDeletes[i];
-            if(M.blogId ==blogId || M.category==category || M.tags.includes(tags) || M.subcategory.includes(subcategory) || M.isPublished == isPublished){
-                let ID = multipleDeletes[i]._id
-                await BlogModel.findByIdAndUpdate(ID, { $set: { isDeleted: true, deletedAt: date } }, { new: true })
-                count1++
-            }
-        }
-        if (count1 > 0) {
-            return res.status(200).send()
-        } else {
+        // let { blogId, authorId, category, tags, subcategory, isPublished } = req.query
+        // //let multipleDeletes1 = await BlogModel.find({$and: [{ isDeleted: false }, {authorId: authorId }, {$or: [ { blogId: blogId }, {category: category }, {tags: tags} , {subcategory: subcategory} , {isPublished: isPublished }] }]})
+        // let multipleDeletes1 = await BlogModel.find({$and:[{ isDeleted: false} ,{ authorId : authorId}]})
 
-            return res.status(404).send({ status: false, msg: " there is no such data is found" })
-
-        }
-
-        
-
-        // logic if all fields matches with blog the delete 
-        
-        // let multipleDeletes = await BlogModel.find(data)
-        // console.log("deleted count",multipleDeletes.length)
-        // if (multipleDeletes.length <= 0) {
+        // if (multipleDeletes1.length <= 0) {
         //     return res.status(404).send({ status: false, msg: "data not found" })
         // }
-        // let date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
+        // let date1 = moment().format("YYYY-MM-DD[T]HH:mm:ss")
 
-        // //console.log(multipleDeletes)
-        // let count = 0
-        // for (let i = 0; i < multipleDeletes.length; i++) {
-        //     if (multipleDeletes[i].isDeleted == false) {
-        //         let blogId = multipleDeletes[i]._id
-        //         count++
-        //         await BlogModel.findByIdAndUpdate(blogId, { $set: { isDeleted: true, deletedAt: date } }, { new: true })
+        // let count1 = 0
+        // for(let i=0; i<multipleDeletes1.length; i++){
+        //     let M = multipleDeletes1[i];
+        //     if(M.blogId ==blogId || M.category==category || M.tags.includes(tags) || M.subcategory.includes(subcategory) || M.isPublished == isPublished){
+        //         let ID = multipleDeletes1[i]._id
+        //         await BlogModel.findByIdAndUpdate(ID, { $set: { isDeleted: true, deletedAt: date1 } }, { new: true })
+        //         count1++
         //     }
         // }
-        // if (count > 0) {
+        // if (count1 > 0) {
         //     return res.status(200).send()
         // } else {
 
@@ -230,7 +202,35 @@ const deleteMultipleFields = async function (req, res) {
 
         // }
 
-        
+
+
+        // logic if all fields matches with blog then delete 
+
+        let multipleDeletes = await BlogModel.find(data)
+        console.log("deleted count", multipleDeletes.length)
+        if (multipleDeletes.length <= 0) {
+            return res.status(404).send({ status: false, msg: "data not found" })
+        }
+        let date = moment().format("YYYY-MM-DD[T]HH:mm:ss")
+
+        //console.log(multipleDeletes)
+        let count = 0
+        for (let i = 0; i < multipleDeletes.length; i++) {
+            if (multipleDeletes[i].isDeleted == false) {
+                let blogId = multipleDeletes[i]._id
+                count++
+                await BlogModel.findByIdAndUpdate(blogId, { $set: { isDeleted: true, deletedAt: date } }, { new: true })
+            }
+        }
+        if (count > 0) {
+            return res.status(200).send()
+        } else {
+
+            return res.status(404).send({ status: false, msg: " there is no such data is found" })
+
+        }
+
+
 
 
 

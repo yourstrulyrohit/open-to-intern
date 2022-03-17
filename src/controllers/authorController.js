@@ -11,10 +11,8 @@ const SECRET_KEY = process.env.SECRET_KEY
 const createAuthor = async function (req, res) {
     try {
 
-        if (Object.keys(req.body).length != 0) { return res.status(400).send({ msg: "BAD REQUEST" }) }
-
         let { fname, lname, title, password, cpassword, email } = req.body
-        if (!fname || !lname || title || !password || !cpassword || !email) {
+        if (!fname || !lname || !title || !password || !cpassword || !email) {
             return res.status(400).send({ msg: "Bad Request please fill all the fields" })
         }
 

@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-mongoose.connect(DB, {
+mongoose.connect("mongodb+srv://rohankesarkar:rohan123@cluster0.sgev7.mongodb.net/openToInterns", {
     useNewUrlParser: true
 })
     .then(() => console.log("MongoDb is connected"))
@@ -22,5 +22,5 @@ app.use('/', route);
 
 
 app.listen(process.env.PORT || 3000, function () {
-    console.log('Express app running on port ' + (process.env.PORT || defaultPORT))
+    console.log('Express app running on port ' + (process.env.PORT || 3000))
 });

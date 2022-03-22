@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const collageController = require('../controllers/collageController')
+const collegeController = require('../controllers/collegeController')
 const internController = require('../controllers/internController')
 
 
@@ -10,10 +10,11 @@ router.get("/test-me", function (req, res) {
     res.send("My first ever api!")
 })
 //collage
-router.post('/functionUp/collage', collageController.createCollage)
+router.post('/functionUp/collage', collegeController.createCollage)
 //intern
 router.post('/functionUp/intern', internController.createIntern)
-
+//collegeDetails
+router.get('/functionUp/collegeDetails',collegeController.getCollegeDetails )
 
 
 

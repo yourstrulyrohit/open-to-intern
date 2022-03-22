@@ -13,6 +13,7 @@ const internSchema = new mongoose.Schema({
         required:true,
         unique:true,
         trim:true,
+        lowercase:true,
         validate: {
             validator: validator.isEmail,
             message: '{VALUE} is not a valid email',
@@ -23,13 +24,15 @@ const internSchema = new mongoose.Schema({
         mobile: {
             type:String,
             required:true, 
-            unique:true
+            unique:true,
+            minlength:[10, "Mobile number should be of 10 digits"],
+            maxlength:[10, "Mobile number should be of 10 digits"]
             
             
         },
         collageId: {
            type: ObjectId, 
-            ref : "Collage"
+            ref : "College"
         },
         isDeleted: {
             type:Boolean,

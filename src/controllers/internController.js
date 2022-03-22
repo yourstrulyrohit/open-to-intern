@@ -1,6 +1,7 @@
 
 const internModel = require("../models/internModel")
-const collageModel = require("../models/collageModel")
+const collegeModel = require("../models/collegeModel")
+const validator = require('validator')
 
 
 
@@ -11,6 +12,7 @@ const createIntern = async function (req, res) {
 let{name, email, mobile, collageId} = req.body
 if(!name) res.status(400).send({status:false, msg:"name is required"})
 if(!email) res.status(400).send({status:false, msg:"email is required"})
+
 if(!mobile) res.status(400).send({status:false, msg:"mobile is required"})
 if(!collageId) res.status(400).send({status:false, msg:"collageId is required"})
 
@@ -42,4 +44,5 @@ res.status(201).send({status:true, data:req.body})
 
 
 module.exports.createIntern = createIntern
+
 

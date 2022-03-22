@@ -28,41 +28,35 @@ const createCollege = async function (req, res) {
         let savedData = collegeModel.create(data)
         res.status(201).send({status:true, data:data})
 
-     
-
-
     }
     catch (err) {
-        console.log("This is the error :", err.message)
-        res.status(500).send({ msg: "Error", error: err.message })
+        return res.status(500).send({status:false,msg: err.message})
     }
 }
 
 const getCollegeDetails = async function(req, res){
     try{
-        if(!Object.keys(req.query).includes("collegeName")) return res.status(400).send({status:false,msg : "Wrong params in given"})
+        
 
         let collegeName = req.query.collegeName
-        if(!collegeName){
-            return res.status(400).send({status:false,msg:"collegeName required"})
+        if(!collegeName)  res.status(400).send({status:false,msg:"collegeName required"})
+
+        let college = await collegeModel.findOne({name:collegeName,isDeleted : false})
+        if(!college)    res.status(404).send({status:false,msg:"College not found "})
+
+        let data = {
+            name: college.name,
+            fullName : college.fullName,
+            logoLink:college.logoLink
         }
-        let collegeData = await collegeModel.findOne({name:collegeName,isDeleted : false})
-        if(!collegeData){
-             return res.status(404).send({status:false,msg:"College not found "})
-        } 
-        let result = {
-            name: collegeData.name,
-            fullName : collegeData.fullName,
-            logoLink:collegeData.logoLink
-        }
-        let id = collegeData._id
+        let id = college._id
         let interestedIntern = await internModel.find({collegeId:id,isDeleted:false}).select({name:1,email:1,mobile:1})
         if(interestedIntern.length ==0){
-            result.interest = "No intern applied till now"
-            return res.status(200).send({status:false,msg:result})
+            data.interest = "no intern found"
+            return res.status(200).send({status:false,msg:data})
         }
-        result.interest = interestedIntern
-        return res.status(200).send({status:true,data:result})
+        data.interest = interestedIntern
+        return res.status(200).send({status:true,data:data})
         
     }
     catch(err){

@@ -25,7 +25,8 @@ const createCollege = async function (req, res) {
         let collegeExist3 = await collegeModel.findOne({logoLink:logoLink})
         if(collegeExist3) { return res.status(422).send({ status: false, error: `ERROR! : ${logoLinke} this college logolink already exist` }) }
 
-        let savedData = collegeModel.create(data)
+        let savedData = await collegeModel.create(data)
+        if(savedData.isDeleted!==false) res.status(400).send({status:false,msg:"isDeleted must be false"})
         res.status(201).send({status:true, data:data})
 
     }

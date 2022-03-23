@@ -19,7 +19,7 @@ const internSchema = new mongoose.Schema({
             message: '{VALUE} is not a valid email',
             isAsync: false
          },
-         match:/a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/
+         match:/[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/
     },
         mobile: {
             type:String,

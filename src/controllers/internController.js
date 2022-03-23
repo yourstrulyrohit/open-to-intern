@@ -13,7 +13,7 @@ let{name, email, mobile, collageId} = req.body
 if(!name) res.status(400).send({status:false, msg:"name is required"})
 
 if(!email) res.status(400).send({status:false, msg:"email is required"})
-if(!(/a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(data.email))){
+if(!(/[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/.test(data.email))){
     return res.status(400).send({status:false,msg:"invalid email id"})
  }
 
@@ -33,7 +33,8 @@ let internExist2 = await internModel.findOne({ mobile: mobile })
 if (internExist2) { return res.status(422).send({ status: false, error: `ERROR! : ${mobile} this number already exist` }) }
 
 
-let savedData = internModel.create(req.body)
+let savedData =await internModel.create(req.body)
+if(savedData.isDeleted!==false) res.status(400).send({status:false,msg:"isDeleted must be false"})
 res.status(201).send({status:true, data:req.body})
 
        

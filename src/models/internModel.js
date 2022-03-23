@@ -18,16 +18,16 @@ const internSchema = new mongoose.Schema({
             validator: validator.isEmail,
             message: '{VALUE} is not a valid email',
             isAsync: false
-         
-        }
+         },
+         match:/a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/
     },
         mobile: {
             type:String,
             required:true, 
             unique:true,
             minlength:[10, "Mobile number should be of 10 digits"],
-            maxlength:[10, "Mobile number should be of 10 digits"]
-            
+            maxlength:[10, "Mobile number should be of 10 digits"],
+            match:/^([+]\d{2})?\d{10}$/
             
         },
         collageId: {
